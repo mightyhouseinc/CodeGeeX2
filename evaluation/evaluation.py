@@ -30,13 +30,12 @@ def postprocess_generation(sample, generation_mode="completion"):
     code = sample["generation"]
     if generation_mode == "instruction":
         if "```" in code:
-            pattern = r'```(.*?)\n(.*?)```'
-            matches = re.findall(pattern, code, re.DOTALL)
+            matches = re.findall(r'```(.*?)\n(.*?)```', code, re.DOTALL)
             for match in matches:
                 code = match[1]
                 break
     sample["generation"] = code
-    
+
     return sample
 
 
@@ -46,20 +45,19 @@ def process_test(sample, problems, dataset_type, language_type, generation_mode)
         prompt = problems[task_id]["prompt"]
         test = problems[task_id]["test"]
         code = sample["generation"]
-        
+
         # Pre-process for different languages
         if language_type == "python":
             test_setup = "\n".join(IMPORT_HELPER["python"]) + "\n"
             test_string = test_setup + prompt + code + "\n" + test + "\n"
         elif language_type == "cpp":
-            test_set_up = ""
-            for s in IMPORT_HELPER["cpp"]:
-                if s not in prompt:
-                    test_set_up += s + "\n"
+            test_set_up = "".join(
+                s + "\n" for s in IMPORT_HELPER["cpp"] if s not in prompt
+            )
             test_string = test_set_up + "\n" + prompt + code + "\n" + test
         elif language_type == "java":
             test_string = prompt + code + "\n" + test
-        elif language_type == "js" or language_type == "javascript":
+        elif language_type in ["js", "javascript"]:
             test_string = prompt + code + "\n" + test
         elif language_type == "go":
             import_string = problems[task_id]["import"]
@@ -70,7 +68,7 @@ def process_test(sample, problems, dataset_type, language_type, generation_mode)
             for pkg in IMPORT_HELPER["go"]:
                 if pkg not in test_setup:
                     p = pkg.split("/")[-1]
-                    if p + "." in code:
+                    if f"{p}." in code:
                         other_pkgs.append(f"\"{pkg}\"")
             if other_pkgs:
                 import_other_pkgs = "import (\n" + "    ".join([p + "\n" for p in other_pkgs]) + ")"

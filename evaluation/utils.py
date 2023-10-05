@@ -12,117 +12,116 @@ from typing import *
 
 
 LANGUAGE_TAG = {
-    "c"            : "// language: C",
-    "c++"          : "// language: C++",
-    "cpp"          : "// language: C++",
-    "c#"           : "// language: C#",
-    "csharp"       : "// language: C#",
-    "c-sharp"      : "// language: C#",
-    "css"          : "/* language: CSS */",
-    "cuda"         : "// language: Cuda",
-    "dart"         : "// language: Dart",
-    "lua"          : "// language: Lua",
-    "objectivec"   : "// language: Objective-C",
-    "objective-c"  : "// language: Objective-C",
+    "c": "// language: C",
+    "c++": "// language: C++",
+    "cpp": "// language: C++",
+    "c#": "// language: C#",
+    "csharp": "// language: C#",
+    "c-sharp": "// language: C#",
+    "css": "/* language: CSS */",
+    "cuda": "// language: Cuda",
+    "dart": "// language: Dart",
+    "lua": "// language: Lua",
+    "objectivec": "// language: Objective-C",
+    "objective-c": "// language: Objective-C",
     "objective-c++": "// language: Objective-C++",
-    "python"       : "# language: Python",
-    "perl"         : "# language: Perl",
-    "prolog"       : f"% language: Prolog",
-    "swift"        : "// language: swift",
-    "lisp"         : "; language: Lisp",
-    "java"         : "// language: Java",
-    "scala"        : "// language: Scala",
-    "tex"          : f"% language: TeX",
-    "vue"          : "<!--language: Vue-->",
-    "markdown"     : "<!--language: Markdown-->",
-    "html"         : "<!--language: HTML-->",
-    "php"          : "// language: PHP",
-    "js"           : "// language: JavaScript",
-    "javascript"   : "// language: JavaScript",
-    "typescript"   : "// language: TypeScript",
-    "go"           : "// language: Go",
-    "shell"        : "# language: Shell",
-    "rust"         : "// language: Rust",
-    "sql"          : "-- language: SQL",
-    "kotlin"       : "// language: Kotlin",
-    "vb"           : "' language: Visual Basic",
-    "ruby"         : "# language: Ruby",
-    "pascal"       : "// language: Pascal",
-    "r"            : "# language: R",
-    "fortran"      : "!language: Fortran",
-    "lean"         : "-- language: Lean",
-    "matlab"       : f"% language: Matlab",
-    "delphi"       : "{language: Delphi}",
-    "scheme"       : "; language: Scheme",
-    "basic"        : "' language: Basic",
-    "assembly"     : "; language: Assembly",
-    "groovy"       : "// language: Groovy",
-    "abap"         : "* language: Abap",
-    "gdscript"     : "# language: GDScript",
-    "haskell"      : "-- language: Haskell",
-    "julia"        : "# language: Julia",
-    "elixir"       : "# language: Elixir",
-    "excel"        : "' language: Excel",
-    "clojure"      : "; language: Clojure",
-    "actionscript" : "// language: ActionScript",
-    "solidity"     : "// language: Solidity",
-    "powershell"   : "# language: PowerShell",
-    "erlang"       : f"% language: Erlang",
-    "cobol"        : "// language: Cobol",
-    "alloy"        : "/* language: Alloy */",
-    "awk"          : "// language: AWK",
-    "thrift"       : "/* language: Thrift */",
-    "sparql"       : "# language: SPARQL",
-    "augeas"       : "// language: Augeas",
-    "cmake"        : "# language: CMake",
-    "f-sharp"      : "// language: F#",
-    "stan"         : "// language: Stan",
-    "isabelle"     : "(*language: Isabelle*)",
-    "dockerfile"   : "# language: Dockerfile",
-    "rmarkdown"    : "# language: RMarkdown",
+    "python": "# language: Python",
+    "perl": "# language: Perl",
+    "prolog": "% language: Prolog",
+    "swift": "// language: swift",
+    "lisp": "; language: Lisp",
+    "java": "// language: Java",
+    "scala": "// language: Scala",
+    "tex": "% language: TeX",
+    "vue": "<!--language: Vue-->",
+    "markdown": "<!--language: Markdown-->",
+    "html": "<!--language: HTML-->",
+    "php": "// language: PHP",
+    "js": "// language: JavaScript",
+    "javascript": "// language: JavaScript",
+    "typescript": "// language: TypeScript",
+    "go": "// language: Go",
+    "shell": "# language: Shell",
+    "rust": "// language: Rust",
+    "sql": "-- language: SQL",
+    "kotlin": "// language: Kotlin",
+    "vb": "' language: Visual Basic",
+    "ruby": "# language: Ruby",
+    "pascal": "// language: Pascal",
+    "r": "# language: R",
+    "fortran": "!language: Fortran",
+    "lean": "-- language: Lean",
+    "matlab": "% language: Matlab",
+    "delphi": "{language: Delphi}",
+    "scheme": "; language: Scheme",
+    "basic": "' language: Basic",
+    "assembly": "; language: Assembly",
+    "groovy": "// language: Groovy",
+    "abap": "* language: Abap",
+    "gdscript": "# language: GDScript",
+    "haskell": "-- language: Haskell",
+    "julia": "# language: Julia",
+    "elixir": "# language: Elixir",
+    "excel": "' language: Excel",
+    "clojure": "; language: Clojure",
+    "actionscript": "// language: ActionScript",
+    "solidity": "// language: Solidity",
+    "powershell": "# language: PowerShell",
+    "erlang": "% language: Erlang",
+    "cobol": "// language: Cobol",
+    "alloy": "/* language: Alloy */",
+    "awk": "// language: AWK",
+    "thrift": "/* language: Thrift */",
+    "sparql": "# language: SPARQL",
+    "augeas": "// language: Augeas",
+    "cmake": "# language: CMake",
+    "f-sharp": "// language: F#",
+    "stan": "// language: Stan",
+    "isabelle": "(*language: Isabelle*)",
+    "dockerfile": "# language: Dockerfile",
+    "rmarkdown": "# language: RMarkdown",
     "literate-agda": "-- language: Literate Agda",
-    "tcl"          : "// language: Augeas",
-    "glsl"         : "// language: GLSL",
-    "antlr"        : "// language: ANTLR",
-    "verilog"      : "// language: Verilog",
-    "racket"       : "; language: Racket",
-    "standard-ml"  : "(*language:Standard ML*)",
-    "elm"          : "-- language: Elm",
-    "yaml"         : "# language: YAML",
-    "smalltalk"    : "'' language: Smalltalk",
-    "ocaml"        : "(*language: OCaml*)",
-    "idris"        : "-- language: Idris",
-    "visual-basic" : "' language: Visual Basic",
+    "tcl": "// language: Augeas",
+    "glsl": "// language: GLSL",
+    "antlr": "// language: ANTLR",
+    "verilog": "// language: Verilog",
+    "racket": "; language: Racket",
+    "standard-ml": "(*language:Standard ML*)",
+    "elm": "-- language: Elm",
+    "yaml": "# language: YAML",
+    "smalltalk": "'' language: Smalltalk",
+    "ocaml": "(*language: OCaml*)",
+    "idris": "-- language: Idris",
+    "visual-basic": "' language: Visual Basic",
     "protocol-buffer": "// language: Protocol Buffer",
-    "bluespec"     : "// language: Bluespec",
-    "applescript"  : "-- language: AppleScript",
-    "makefile"     : "# language: Makefile",
-    "tcsh"         : "# language: TCSH",
-    "maple"        : "# language: Maple",
+    "bluespec": "// language: Bluespec",
+    "applescript": "-- language: AppleScript",
+    "makefile": "# language: Makefile",
+    "tcsh": "# language: TCSH",
+    "maple": "# language: Maple",
     "systemverilog": "// language: SystemVerilog",
     "literate-coffeescript": "# language: Literate CoffeeScript",
-    "vhdl"         : "-- language: VHDL",
+    "vhdl": "-- language: VHDL",
     "restructuredtext": ".. language: reStructuredText",
-    "sas"          : "* language: SAS",
+    "sas": "* language: SAS",
     "literate-haskell": "> language: Literate Haskell",
     "java-server-pages": "// language: Java Server Pages",
-    "coffeescript" : "# language: CoffeeScript",
-    "emacs-lisp"   : "; language: Emacs Lisp",
-    "mathematica"  : "// language: Mathematica",
-    "xslt"         : "<!--language: XSLT-->",
-    "zig"          : "// language: Zig",
-    "common-lisp"  : "; language: Common Lisp",
-    "stata"        : "* language: Stata",
-    "agda"         : "-- language: Agda",
-    "ada"          : "-- language: Ada",
+    "coffeescript": "# language: CoffeeScript",
+    "emacs-lisp": "; language: Emacs Lisp",
+    "mathematica": "// language: Mathematica",
+    "xslt": "<!--language: XSLT-->",
+    "zig": "// language: Zig",
+    "common-lisp": "; language: Common Lisp",
+    "stata": "* language: Stata",
+    "agda": "-- language: Agda",
+    "ada": "-- language: Ada",
 }
 
 
-LANGUAGE_COMMENT_SIGN = {}
-for lang in LANGUAGE_TAG:
-    LANGUAGE_COMMENT_SIGN[lang] = LANGUAGE_TAG[lang].split("language:")[0].strip()
-
-
+LANGUAGE_COMMENT_SIGN = {
+    lang: LANGUAGE_TAG[lang].split("language:")[0].strip()
+    for lang in LANGUAGE_TAG
+}
 IMPORT_HELPER = {
     "python": [
         "import math",
@@ -194,14 +193,13 @@ def stream_jsonl(filename: str) -> Iterable[Dict]:
                     
 
 def stream_jsonl_all(filename: str) -> Iterable[Dict]:
-    results = []
     if filename.endswith(".gz"):
         fp = gzip.open(open(filename, "rb"), "rt")
     else:
         fp = open(filename, "r")
-    for line in fp:
-        if any(not x.isspace() for x in line):
-            results.append(json.loads(line))
+    results = [
+        json.loads(line) for line in fp if any(not x.isspace() for x in line)
+    ]
     fp.close()
 
     return results
@@ -261,29 +259,28 @@ def read_translation_dataset(
     lang_tgt: str = None,
     dataset_type: str = "humanevalx",
 ) -> Dict:
-    if "humanevalx" in dataset_type.lower():
-        dataset_src = {task["task_id"]: task for task in stream_jsonl(data_file_src)}
-        dataset_tgt = {task["task_id"].split("/")[-1]: task for task in stream_jsonl(data_file_tgt)}
-        for k, sample in dataset_src.items():
-            prompt = "code translation\n"
-            if lang_src == "cpp":
-                prompt += "C++:\n"
-            elif lang_src == "js":
-                prompt += "JavaScript:\n"
-            else:
-                prompt += f"{lang_src}:\n".capitalize()
-            prompt += dataset_src[k]["declaration"] + "\n" + dataset_src[k]["canonical_solution"].rstrip() + "\n"
-            if lang_tgt == "cpp":
-                prompt += "C++:\n"
-            elif lang_tgt == "js":
-                prompt += "JavaScript:\n"
-            else:
-                prompt += f"{lang_tgt}:\n".capitalize()
-            prompt += dataset_tgt[k.split("/")[-1]]["declaration"]
-            dataset_src[k]["prompt"] = prompt
-    else:
+    if "humanevalx" not in dataset_type.lower():
         raise f"Dataset: {dataset_type} not supported."
 
+    dataset_src = {task["task_id"]: task for task in stream_jsonl(data_file_src)}
+    dataset_tgt = {task["task_id"].split("/")[-1]: task for task in stream_jsonl(data_file_tgt)}
+    for k, sample in dataset_src.items():
+        prompt = "code translation\n"
+        if lang_src == "cpp":
+            prompt += "C++:\n"
+        elif lang_src == "js":
+            prompt += "JavaScript:\n"
+        else:
+            prompt += f"{lang_src}:\n".capitalize()
+        prompt += dataset_src[k]["declaration"] + "\n" + dataset_src[k]["canonical_solution"].rstrip() + "\n"
+        if lang_tgt == "cpp":
+            prompt += "C++:\n"
+        elif lang_tgt == "js":
+            prompt += "JavaScript:\n"
+        else:
+            prompt += f"{lang_tgt}:\n".capitalize()
+        prompt += dataset_tgt[k.split("/")[-1]]["declaration"]
+        dataset_src[k]["prompt"] = prompt
     return dataset_src
 
 
@@ -298,16 +295,17 @@ def process_extra_prompt(
     """
     language = language_type.lower()
     if dataset_type == "humanevalx":
-        extra_prompt = ""
         # extra_prompt = LANGUAGE_TAG[language] + "\n"
         prompt = prompt.strip()
-        if generation_mode == "instruction":
-            return "问：" + extra_prompt + prompt + "\n答："
-        return extra_prompt + prompt
-    elif dataset_type == "mbpp":
         extra_prompt = ""
+        return (
+            f"问：{extra_prompt}{prompt}" + "\n答："
+            if generation_mode == "instruction"
+            else extra_prompt + prompt
+        )
+    elif dataset_type == "mbpp":
         prompt = prompt.strip()
-        return extra_prompt + prompt
+        return f"{prompt}"
     else:
         return prompt
 
@@ -323,42 +321,42 @@ def is_code_generation_finished(
     if dataset_type == "mbpp":
         end_words = ["\ndef", "\nassert"]
         for w in end_words:
-            if w == "\ndef":
-                if code.count(w) > 1:
-                    return True
-            else:
-                if w in code:
-                    return True
-    else:
-        if language_type.lower() == "python":
-            for line in code.split("\n"):
-                if len(line.strip()) > 0 and line[0] != ' ' and line[0] != '\t':
-                    return True
-            end_words = ["\ndef", "\nclass", "\nif", "\n#", "\nprint"]
-            for w in end_words:
-                if w in code:
-                    return True
-        elif language_type.lower() == "java":
-            if code.count("{") + 1 == code.count("}"):
+            if (
+                w == "\ndef"
+                and code.count(w) > 1
+                or w != "\ndef"
+                and w in code
+            ):
                 return True
-        elif language_type.lower() == "go":
-            if "\nfunc main(" in code:
+    elif language_type.lower() == "python":
+        for line in code.split("\n"):
+            if len(line.strip()) > 0 and line[0] != ' ' and line[0] != '\t':
                 return True
-            if code.count("{") + 1 == code.count("}"):
+        end_words = ["\ndef", "\nclass", "\nif", "\n#", "\nprint"]
+        for w in end_words:
+            if w in code:
                 return True
-        elif language_type.lower() == "js":
-            if code.count("{") + 1 == code.count("}"):
-                return True
-        elif language_type.lower() == "cpp":
-            if "\nint main()" in code:
-                return True
-            if code.count("{") + 1 == code.count("}"):
-                return True
-        elif language_type.lower() == "rust":
-            if "\nfn main()" in code:
-                return True
-            if code.count("{") + 1 == code.count("}"):
-                return True
+    elif language_type.lower() == "java":
+        if code.count("{") + 1 == code.count("}"):
+            return True
+    elif language_type.lower() == "go":
+        if "\nfunc main(" in code:
+            return True
+        if code.count("{") + 1 == code.count("}"):
+            return True
+    elif language_type.lower() == "js":
+        if code.count("{") + 1 == code.count("}"):
+            return True
+    elif language_type.lower() == "cpp":
+        if "\nint main()" in code:
+            return True
+        if code.count("{") + 1 == code.count("}"):
+            return True
+    elif language_type.lower() == "rust":
+        if "\nfn main()" in code:
+            return True
+        if code.count("{") + 1 == code.count("}"):
+            return True
 
     return False
 
@@ -381,10 +379,7 @@ def cleanup_code(
     if dataset_type == "mbpp":
         end_words = ["\nassert", "\ndef"]
         for w in end_words:
-            if w == "\ndef":
-                if code.count(w) > 1:
-                    code = code[:code.rfind(w)]
-            else:
+            if w == "\ndef" and code.count(w) > 1 or w != "\ndef":
                 code = code[:code.rfind(w)]
         code = first_block(code, stop_words)
     elif dataset_type == "humanevalx":
@@ -464,9 +459,9 @@ class Logger:
         self.logger.setLevel(log_level)
 
         self.formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-        
+
         # Log to console
-        if log_mode == "both" or log_mode == "terminal":
+        if log_mode in ["both", "terminal"]:
             console_handler = logging.StreamHandler()
             if not disable_formatter:
                 console_handler.setFormatter(self.formatter)
@@ -474,7 +469,7 @@ class Logger:
 
         # Log to file
         if log_file is not None:
-            if log_mode == "both" or log_mode == "file":
+            if log_mode in ["both", "file"]:
                 file_handler = logging.FileHandler(log_file, mode='w')
                 if not disable_formatter:
                     file_handler.setFormatter(self.formatter)

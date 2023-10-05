@@ -33,16 +33,15 @@ except:
 
 
 def get_model(args):
-    if not args.cpu:
-        if torch.cuda.is_available():
-            device = f"cuda:{args.gpu}"
-        elif torch.backends.mps.is_built():
-            device = "mps"
-        else:
-            device = "cpu"
+    if args.cpu:
+        device = "cpu"
+
+    elif torch.cuda.is_available():
+        device = f"cuda:{args.gpu}"
+    elif torch.backends.mps.is_built():
+        device = "mps"
     else:
         device = "cpu"
-    
     tokenizer = AutoTokenizer.from_pretrained(args.model_path, trust_remote_code=True)
 
     if args.n_gpus > 1 and enable_multiple_gpus:
@@ -52,9 +51,7 @@ def get_model(args):
         model = model.eval()
     elif enable_chatglm_cpp and args.chatglm_cpp:
         print("Using chatglm-cpp to improve performance")
-        dtype = "f16"
-        if args.quantize in [4, 5, 8]:
-            dtype = f"q{args.quantize}_0"
+        dtype = f"q{args.quantize}_0" if args.quantize in [4, 5, 8] else "f16"
         model = chatglm_cpp.Pipeline(args.model_path, dtype=dtype)
     else:
         model = AutoModel.from_pretrained(args.model_path, trust_remote_code=True)
@@ -148,73 +145,73 @@ def add_code_generation_args(parser):
 
 # 更完编程语言列表请查看 evaluation/utils.py / Full list of supported languages in evaluation/utils.py
 LANGUAGE_TAG = {
-    "Abap"         : "* language: Abap",
-    "ActionScript" : "// language: ActionScript",
-    "Ada"          : "-- language: Ada",
-    "Agda"         : "-- language: Agda",
-    "ANTLR"        : "// language: ANTLR",
-    "AppleScript"  : "-- language: AppleScript",
-    "Assembly"     : "; language: Assembly",
-    "Augeas"       : "// language: Augeas",
-    "AWK"          : "// language: AWK",
-    "Basic"        : "' language: Basic",
-    "C"            : "// language: C",
-    "C#"           : "// language: C#",
-    "C++"          : "// language: C++",
-    "CMake"        : "# language: CMake",
-    "Cobol"        : "// language: Cobol",
-    "CSS"          : "/* language: CSS */",
-    "CUDA"         : "// language: Cuda",
-    "Dart"         : "// language: Dart",
-    "Delphi"       : "{language: Delphi}",
-    "Dockerfile"   : "# language: Dockerfile",
-    "Elixir"       : "# language: Elixir",
-    "Erlang"       : f"% language: Erlang",
-    "Excel"        : "' language: Excel",
-    "F#"           : "// language: F#",
-    "Fortran"      : "!language: Fortran",
-    "GDScript"     : "# language: GDScript",
-    "GLSL"         : "// language: GLSL",
-    "Go"           : "// language: Go",
-    "Groovy"       : "// language: Groovy",
-    "Haskell"      : "-- language: Haskell",
-    "HTML"         : "<!--language: HTML-->",
-    "Isabelle"     : "(*language: Isabelle*)",
-    "Java"         : "// language: Java",
-    "JavaScript"   : "// language: JavaScript",
-    "Julia"        : "# language: Julia",
-    "Kotlin"       : "// language: Kotlin",
-    "Lean"         : "-- language: Lean",
-    "Lisp"         : "; language: Lisp",
-    "Lua"          : "// language: Lua",
-    "Markdown"     : "<!--language: Markdown-->",
-    "Matlab"       : f"% language: Matlab",
-    "Objective-C"  : "// language: Objective-C",
+    "Abap": "* language: Abap",
+    "ActionScript": "// language: ActionScript",
+    "Ada": "-- language: Ada",
+    "Agda": "-- language: Agda",
+    "ANTLR": "// language: ANTLR",
+    "AppleScript": "-- language: AppleScript",
+    "Assembly": "; language: Assembly",
+    "Augeas": "// language: Augeas",
+    "AWK": "// language: AWK",
+    "Basic": "' language: Basic",
+    "C": "// language: C",
+    "C#": "// language: C#",
+    "C++": "// language: C++",
+    "CMake": "# language: CMake",
+    "Cobol": "// language: Cobol",
+    "CSS": "/* language: CSS */",
+    "CUDA": "// language: Cuda",
+    "Dart": "// language: Dart",
+    "Delphi": "{language: Delphi}",
+    "Dockerfile": "# language: Dockerfile",
+    "Elixir": "# language: Elixir",
+    "Erlang": "% language: Erlang",
+    "Excel": "' language: Excel",
+    "F#": "// language: F#",
+    "Fortran": "!language: Fortran",
+    "GDScript": "# language: GDScript",
+    "GLSL": "// language: GLSL",
+    "Go": "// language: Go",
+    "Groovy": "// language: Groovy",
+    "Haskell": "-- language: Haskell",
+    "HTML": "<!--language: HTML-->",
+    "Isabelle": "(*language: Isabelle*)",
+    "Java": "// language: Java",
+    "JavaScript": "// language: JavaScript",
+    "Julia": "# language: Julia",
+    "Kotlin": "// language: Kotlin",
+    "Lean": "-- language: Lean",
+    "Lisp": "; language: Lisp",
+    "Lua": "// language: Lua",
+    "Markdown": "<!--language: Markdown-->",
+    "Matlab": "% language: Matlab",
+    "Objective-C": "// language: Objective-C",
     "Objective-C++": "// language: Objective-C++",
-    "Pascal"       : "// language: Pascal",
-    "Perl"         : "# language: Perl",
-    "PHP"          : "// language: PHP",
-    "PowerShell"   : "# language: PowerShell",
-    "Prolog"       : f"% language: Prolog",
-    "Python"       : "# language: Python",
-    "R"            : "# language: R",
-    "Racket"       : "; language: Racket",
-    "RMarkdown"    : "# language: RMarkdown",
-    "Ruby"         : "# language: Ruby",
-    "Rust"         : "// language: Rust",
-    "Scala"        : "// language: Scala",
-    "Scheme"       : "; language: Scheme",
-    "Shell"        : "# language: Shell",
-    "Solidity"     : "// language: Solidity",
-    "SPARQL"       : "# language: SPARQL",
-    "SQL"          : "-- language: SQL",
-    "Swift"        : "// language: swift",
-    "TeX"          : f"% language: TeX",
-    "Thrift"       : "/* language: Thrift */",
-    "TypeScript"   : "// language: TypeScript",
-    "Vue"          : "<!--language: Vue-->",
-    "Verilog"      : "// language: Verilog",
-    "Visual Basic" : "' language: Visual Basic",
+    "Pascal": "// language: Pascal",
+    "Perl": "# language: Perl",
+    "PHP": "// language: PHP",
+    "PowerShell": "# language: PowerShell",
+    "Prolog": "% language: Prolog",
+    "Python": "# language: Python",
+    "R": "# language: R",
+    "Racket": "; language: Racket",
+    "RMarkdown": "# language: RMarkdown",
+    "Ruby": "# language: Ruby",
+    "Rust": "// language: Rust",
+    "Scala": "// language: Scala",
+    "Scheme": "; language: Scheme",
+    "Shell": "# language: Shell",
+    "Solidity": "// language: Solidity",
+    "SPARQL": "# language: SPARQL",
+    "SQL": "-- language: SQL",
+    "Swift": "// language: swift",
+    "TeX": "% language: TeX",
+    "Thrift": "/* language: Thrift */",
+    "TypeScript": "// language: TypeScript",
+    "Vue": "<!--language: Vue-->",
+    "Verilog": "// language: Verilog",
+    "Visual Basic": "' language: Visual Basic",
 }
 
 

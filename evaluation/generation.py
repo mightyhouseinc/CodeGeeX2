@@ -174,10 +174,7 @@ class CodeStoppingCriteria(StoppingCriteria):
                 dataset_type=self.dataset_type,
                 language_type=self.language_type) or input_id.shape[-1] >= self.max_length:
                 self.stop_index[i] = len(code) + len(self.prompt)
-        if all([s != -1 for s in self.stop_index]):
-            return True
-        
-        return False
+        return all(s != -1 for s in self.stop_index)
 
 
 def run_generation_distributed(args, model, tokenizer):
@@ -185,27 +182,29 @@ def run_generation_distributed(args, model, tokenizer):
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
     socket.connect(f"tcp://{args.channel_ip}:{args.channel_port}")
-    
+
     os.makedirs(args.output_path, exist_ok=True)
     output_path = os.path.join(
         args.output_path,
         f"{args.task_name}-t{args.temperature}-topp{args.top_p}-ns{args.samples_per_problem}-rank{args.rank}.jsonl",
     )
-    
+
     def process(obj):
         results = []
         prompt = obj["prompt"]
         if args.generation_mode == "instruction":
             inputs = tokenizer([prompt] * args.micro_batch_size, return_tensors="pt")
             inputs = inputs.to(model.device)
-            outputs = model.generate(**inputs,
-                                    max_length=args.max_length,
-                                    do_sample=True if not args.greedy else False,
-                                    use_cache=True,
-                                    top_p=args.top_p,
-                                    top_k=args.top_k,
-                                    temperature=args.temperature,
-                                    pad_token_id=tokenizer.eos_token_id)
+            outputs = model.generate(
+                **inputs,
+                max_length=args.max_length,
+                do_sample=not args.greedy,
+                use_cache=True,
+                top_p=args.top_p,
+                top_k=args.top_k,
+                temperature=args.temperature,
+                pad_token_id=tokenizer.eos_token_id
+            )
             for i, output in enumerate(outputs):
                 response = tokenizer.decode(output)
                 res = obj.copy()
@@ -221,15 +220,17 @@ def run_generation_distributed(args, model, tokenizer):
                 dataset_type=args.dataset_type,
                 language_type=args.language_type,
                 prompt=prompt)
-            outputs = model.generate(**inputs,
-                                    max_length=args.max_length,
-                                    do_sample=True if not args.greedy else False,
-                                    use_cache=True,
-                                    stopping_criteria=[stop_criteria],
-                                    top_p=args.top_p,
-                                    top_k=args.top_k,
-                                    temperature=args.temperature,
-                                    pad_token_id=tokenizer.eos_token_id)
+            outputs = model.generate(
+                **inputs,
+                max_length=args.max_length,
+                do_sample=not args.greedy,
+                use_cache=True,
+                stopping_criteria=[stop_criteria],
+                top_p=args.top_p,
+                top_k=args.top_k,
+                temperature=args.temperature,
+                pad_token_id=tokenizer.eos_token_id
+            )
             for i, output in enumerate(outputs):
                 response = tokenizer.decode(output)
                 res = obj.copy()
@@ -239,9 +240,9 @@ def run_generation_distributed(args, model, tokenizer):
                     dataset_type=args.dataset_type,
                     language_type=args.language_type)
                 results.append(res)
-        
+
         return results
-    
+
     fout = open(output_path, "w", encoding="utf-8")
     while True:
         socket.send_json({"rank": args.rank, "action": "pull"})
@@ -252,7 +253,7 @@ def run_generation_distributed(args, model, tokenizer):
 
             current_spec = resp["task_id"]
             results = process(current_spec)
-            
+
             for res in results:
                 fout.write(json.dumps(res, ensure_ascii=False) + "\n")
                 fout.flush()
@@ -285,25 +286,31 @@ def main(args, node_rank: int, local_rank: int, master_port: int, num_devices: i
     args.rank = num_devices * node_rank + local_rank
     args.world_size = world_size
     logger.info(f"Generating on rank {args.rank} of {args.world_size}")
-    
+
     try:
         if args.model_name in ["codegeex2-6b"]:
             tokenizer = AutoTokenizer.from_pretrained(args.model_path, trust_remote_code=True)
         else:
             tokenizer = AutoTokenizer.from_pretrained(args.model_path, clean_up_tokenization_spaces=False, trust_remote_code=True)
         if args.model_name in ["codegeex2-6b"]:
-            model = AutoModel.from_pretrained(args.model_path, trust_remote_code=True).to("cuda:{}".format(local_rank % torch.cuda.device_count()))
+            model = AutoModel.from_pretrained(
+                args.model_path, trust_remote_code=True
+            ).to(f"cuda:{local_rank % torch.cuda.device_count()}")
         elif args.model_name in ["starcoder", "replit-code-v1-3b", "codegen25-7b-multi", "codegen25-7b-mono", "codegen-16B-multi"]:
-            model = AutoModelForCausalLM.from_pretrained(args.model_path, trust_remote_code=True).to("cuda:{}".format(local_rank % torch.cuda.device_count()))
+            model = AutoModelForCausalLM.from_pretrained(
+                args.model_path, trust_remote_code=True
+            ).to(f"cuda:{local_rank % torch.cuda.device_count()}")
         else:
             try:
-                model = AutoModel.from_pretrained(args.model_path, trust_remote_code=True).to("cuda:{}".format(local_rank % torch.cuda.device_count()))
+                model = AutoModel.from_pretrained(
+                    args.model_path, trust_remote_code=True
+                ).to(f"cuda:{local_rank % torch.cuda.device_count()}")
             except:
                 logger.error(f"Model {args.model_name} not supported.")
                 raise NotImplementedError
     except Exception as e:
         logger.error(e)
-    
+
     model = model.eval()
     # Generate samples.
     run_generation_distributed(args, model, tokenizer)
@@ -313,7 +320,7 @@ def main(args, node_rank: int, local_rank: int, master_port: int, num_devices: i
 
 
 def server(args):
-    logger.info(f"[ server ] starting ...")
+    logger.info("[ server ] starting ...")
     entries = read_dataset(args.data_path, dataset_type=args.dataset_type)
 
     assert args.samples_per_problem % args.micro_batch_size == 0, "samples_per_problem should be divisible by batch_size"
@@ -335,7 +342,7 @@ def server(args):
     # setup zeromq channel
     logger.info(f"[ server ] starting up on port {args.channel_port}")
     context = zmq.Context()
-    logger.info(f"[ server ] creating socket")
+    logger.info("[ server ] creating socket")
     socket = context.socket(zmq.REP)
     logger.info(f"[ server ] binding to port {args.channel_port}")
     socket.bind(f"tcp://*:{args.channel_port}")
@@ -348,23 +355,16 @@ def server(args):
     running_workers = args.gen_node_world_size * torch.cuda.device_count()
     num_finished = 0
 
-    logger.info(f"[ server ] listening for requests ...")
+    logger.info("[ server ] listening for requests ...")
     start_time = time.perf_counter()
     while True:
         # Wait for next request from client
         msg = socket.recv_json()
-        rank = msg["rank"]
         action = msg["action"]
 
         if action == "pull":
-            if len(remaining_entries) == 0:
-                socket.send_json({"task_id": None})
-                running_workers -= 1
-                logger.info(f"[ server ] Shutting down worker {rank}, remaining {running_workers} workers")
-                if running_workers == 0 and num_finished == len(all_entries):
-                    logger.info(f"[ server ] All workers finished")
-                    break
-            else:
+            rank = msg["rank"]
+            if remaining_entries:
                 entry = remaining_entries.pop()
                 time_elapsed = time.perf_counter() - start_time
                 logger.info(f"[ server ] Sending entry {entry['task_id']} to worker {rank}")
@@ -378,17 +378,22 @@ def server(args):
                     f"[ server ] total {len(all_entries)}, assigned {len(all_entries) - len(remaining_entries)}, finished {num_finished}, elapsed {time_elapsed:.4f}, speed {time_per_sampple:.4f}s/sample, remaining {remaining:.4f}",
                 )
                 socket.send_json({"task_id": entry})
-        else:
-            if action == "success":
-                logger.info(f"[ server ] {msg['task_id']} is finished")
-                socket.send_json({"pong": 1})
             else:
-                logger.info(f"[ server ] {msg['task_id']} is not finished")
-                remaining_entries.append(msg['task_id'])
-                socket.send_json({"pong": 1})
-                break
-
+                socket.send_json({"task_id": None})
+                running_workers -= 1
+                logger.info(f"[ server ] Shutting down worker {rank}, remaining {running_workers} workers")
+                if running_workers == 0 and num_finished == len(all_entries):
+                    logger.info("[ server ] All workers finished")
+                    break
+        elif action == "success":
+            logger.info(f"[ server ] {msg['task_id']} is finished")
+            socket.send_json({"pong": 1})
             num_finished += 1
+        else:
+            logger.info(f"[ server ] {msg['task_id']} is not finished")
+            remaining_entries.append(msg['task_id'])
+            socket.send_json({"pong": 1})
+            break
 
 
 if __name__ == "__main__":
@@ -396,23 +401,26 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     add_code_generation_specific_args(parser)
     args = parser.parse_args()
-    
+
     if args.log_path is None:
         args.log_path = os.path.join(args.output_path, "generation.log")
 
-    logger.info("start method: " + torch.multiprocessing.get_start_method())
-    
+    logger.info(f"start method: {torch.multiprocessing.get_start_method()}")
+
     processes = []
     num_devices = torch.cuda.device_count()
     hosts = open(args.hostfile, "r").readlines()
     hosts = [host.strip() for host in hosts]
     master_port = args.master_port
 
-    node_rank = None
-    for i in range(len(hosts)):
-        if hosts[i] == socket.gethostbyname(socket.gethostname()):
-            node_rank = i
-            break
+    node_rank = next(
+        (
+            i
+            for i in range(len(hosts))
+            if hosts[i] == socket.gethostbyname(socket.gethostname())
+        ),
+        None,
+    )
     assert (
             node_rank is not None
     ), f"Could not find hostname ({socket.gethostbyname(socket.gethostname())}) in hostlist"
@@ -420,14 +428,13 @@ if __name__ == "__main__":
     # launch server
     if socket.gethostbyname(socket.gethostname()) == hosts[0]:
         server_process = torch.multiprocessing.Process(target=server, args=(args,))
-        logger.info(f"Launching server ...")
+        logger.info("Launching server ...")
         server_process.start()
         processes.append(server_process)
 
     for i in range(num_devices):
         local_rank = i
-        logger.info(f"launching local rank {i}")
-
+        logger.info(f"launching local rank {local_rank}")
         p = torch.multiprocessing.Process(
             target=main,
             args=(args, node_rank, local_rank, master_port, num_devices),
