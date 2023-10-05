@@ -22,14 +22,14 @@ def dicts_to_jsonl(data_list: list, filename: str, compress: bool = True) -> Non
     :param compress: (bool) should file be compressed into a gzip archive?
     """
     sjsonl = '.jsonl'
-    sgz = '.gz'
     # Check filename
     if not filename.endswith(sjsonl):
-        filename = filename + sjsonl
+        filename += sjsonl
     # Save data
-    
+
     if compress:
-        filename = filename + sgz
+        sgz = '.gz'
+        filename += sgz
         with gzip.open(filename, 'w') as compressed:
             for ddict in data_list:
                 jout = json.dumps(ddict) + '\n'
